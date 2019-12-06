@@ -16,7 +16,8 @@
     "test:watch": "jest --watch",
     "test:cov": "jest --coverage",
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
-    "test:e2e": "echo 'No e2e tests implemented yet.'"
+    "test:e2e": "echo 'No e2e tests implemented yet.'",
+    "interfaces": "pbjs -t static-module src/health/health.proto -o src/health/interfaces/compiled.js && pbts -o src/health/interfaces/compiled.d.ts src/health/interfaces/compiled.js"
   },
   "dependencies": {
     "@grpc/proto-loader": "0.5.3",
@@ -36,7 +37,6 @@
     "@nestjs/cli": "6.12.9",
     "@nestjs/schematics": "6.7.5",
     "@nestjs/testing": "6.10.7",
-    "@netrunner/pbf-ts": "^1.0.10",
     "@types/express": "4.17.2",
     "@types/jest": "^24.0.23",
     "@types/node": "10.17.3",
@@ -45,6 +45,7 @@
     "grpc-man": "^1.4.3",
     "jest": "24.9.0",
     "prettier": "1.19.1",
+    "protobufjs": "^6.8.8",
     "supertest": "4.0.2",
     "ts-jest": "24.2.0",
     "ts-loader": "6.2.1",
