@@ -28,7 +28,7 @@ spec:
         deployedBy: deploy-node-app
     spec:
       containers:
-        - image: 'jefftian/grpc-health:9f8013a'
+        - image: 'jefftian/grpc-health:5ba9b4a-1575715748'
           imagePullPolicy: Always
           name: grpc-health
           env:

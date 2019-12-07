@@ -1,14 +1,15 @@
 import GrpcClient from 'grpc-man/lib/Client';
 import {join} from 'path';
-import {spawn} from 'child_process';
+import {ChildProcess, spawn} from 'child_process';
 import {sleep} from '@jeff-tian/sleep';
 import {grpc} from './interfaces/compiled';
 import ServingStatus = grpc.health.v1.HealthCheckResponse.ServingStatus;
+import {ShutdownSignal} from '@nestjs/common';
 
 jest.setTimeout(30000);
 
 describe('Health Check', () => {
-    let childProcess;
+    let childProcess: ChildProcess;
     beforeAll(async () => {
         const res = await new Promise((resolve, reject) => {
             childProcess = spawn('npm', ['start'], {
@@ -17,22 +18,32 @@ describe('Health Check', () => {
                 windowsHide: false
             });
             childProcess.stdout.on('data', (data: Buffer) => {
-                console.log(data.toString());
+                process.stdout.write(data);
                 resolve(data);
             });
             childProcess.stderr.on('data', (data: Buffer) => {
-                console.error(data.toString());
+                process.stderr.write(data);
                 reject(data);
+            });
+            childProcess.on('exit', (code, signal) => {
+                // process.stdout.write('ahhh, dying... ' + code + ', ' + signal, 'utf8');
+
+                setTimeout(() => {
+                    process.exit(code);
+                }, 3000);
+            });
+            childProcess.on('uncaughtException', (e) => {
+                process.stderr.write(e.stack, 'utf8');
             });
         });
 
-        await sleep(8);
+        await sleep(5);
     });
 
-    afterAll(() => {
+    afterAll(async () => {
         console.log('done testing!');
-        childProcess.stdin.pause();
-        childProcess.kill('SIGKILL');
+        childProcess.kill(ShutdownSignal.SIGINT);
+        console.log('killed');
     });
 
     it('checks', async () => {

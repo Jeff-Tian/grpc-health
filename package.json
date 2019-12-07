@@ -1,6 +1,6 @@
 {
   "name": "grpc-health",
-  "version": "1.0.0",
+  "version": "0.0.0-development",
   "description": "Nest TypeScript starter repository",
   "license": "MIT",
   "scripts": {
@@ -12,14 +12,15 @@
     "start:debug": "nest start --debug --watch",
     "start:prod": "node dist/main",
     "lint": "tslint -p tsconfig.json -c tslint.json",
-    "test": "jest --detectOpenHandles",
+    "test": "npm run build&&jest --detectOpenHandles",
     "test:watch": "jest --watch",
     "test:cov": "jest --coverage",
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
     "test:e2e": "echo 'No e2e tests implemented yet.'",
     "interfaces": "pbjs -t static-module src/health/health.proto -o src/health/interfaces/compiled.js && pbts -o src/health/interfaces/compiled.d.ts src/health/interfaces/compiled.js",
-    "deploy": "npx deploy-node-app",
-    "update": "kubectl --context=\"kubesail-jeff-tian\" apply -k inf/prod"
+    "deploy": "npm run build&&npx deploy-node-app",
+    "update": "kubectl --context=\"kubesail-jeff-tian\" apply -k inf/prod",
+    "semantic-release": "semantic-release"
   },
   "dependencies": {
     "@grpc/proto-loader": "0.5.3",
@@ -54,7 +55,8 @@
     "ts-node": "8.5.4",
     "tsconfig-paths": "3.9.0",
     "tslint": "5.20.1",
-    "typescript": "3.7.2"
+    "typescript": "3.7.2",
+    "semantic-release": "^15.13.31"
   },
   "jest": {
     "moduleFileExtensions": [
@@ -81,5 +83,9 @@
       "registryUsername": "jefftian",
       "isPublic": true
     }
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Jeff-Tian/grpc-health.git"
   }
 }
