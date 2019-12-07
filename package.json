@@ -17,7 +17,8 @@
     "test:cov": "jest --coverage",
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
     "test:e2e": "echo 'No e2e tests implemented yet.'",
-    "interfaces": "pbjs -t static-module src/health/health.proto -o src/health/interfaces/compiled.js && pbts -o src/health/interfaces/compiled.d.ts src/health/interfaces/compiled.js"
+    "interfaces": "pbjs -t static-module src/health/health.proto -o src/health/interfaces/compiled.js && pbts -o src/health/interfaces/compiled.d.ts src/health/interfaces/compiled.js",
+    "deploy": "npx deploy-node-app"
   },
   "dependencies": {
     "@grpc/proto-loader": "0.5.3",
@@ -67,5 +68,17 @@
     },
     "coverageDirectory": "./coverage",
     "testEnvironment": "node"
+  },
+  "deploy-node-app": {
+    "prod": {
+      "context": "kubesail-jeff-tian",
+      "registry": "index.docker.io/v1/",
+      "type": "server",
+      "port": 8080,
+      "protocol": "tcp",
+      "entrypoint": "dist/main.js",
+      "registryUsername": "jefftian",
+      "isPublic": true
+    }
   }
 }
