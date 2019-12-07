@@ -22,6 +22,11 @@ export class HealthController implements OnModuleInit {
         this.healthService = this.client.getService<HealthService>('Health');
     }
 
+    @Get('/version')
+    version(): Observable<any> {
+        return require('../../package.json').version;
+    }
+
     @Get()
     execute(): Observable<any> {
         return this.healthService.check({service: 'whatever'});

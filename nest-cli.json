@@ -1,5 +1,8 @@
 {
   "compilerOptions": {
-    "assets": ["**/*.proto"]
+    "assets": [
+      "**/*.proto",
+      "**/interfaces/*.js"
+    ]
   }
 }

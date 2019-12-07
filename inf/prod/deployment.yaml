@@ -36,6 +36,9 @@ spec:
               value: dns
           ports:
             - containerPort: 8080
+              name: grpc
+              protocol: TCP
+            - containerPort: 3001
               name: http
               protocol: TCP
           readinessProbe:
