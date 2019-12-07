@@ -5,6 +5,7 @@ FROM node:12-slim
 WORKDIR /app
 
 ENV NODE_ENV="production"
+ENV GRPC_HEALTH_PROBE_VERSION="v0.3.1"
 
 # Add common build deps
 RUN apt-get update && apt-get install -yqq nginx && \
@@ -17,6 +18,10 @@ USER node
 COPY package.json yarn.loc[k] package-lock.jso[n] /app/
 
 RUN npm install --production --no-cache --no-audit
+
+RUN GRPC_HEALTH_PROBE_VERSION=v0.3.1 && \
+    wget -qO/bin/grpc_health_probe https://github.com/grpc-ecosystem/grpc-health-probe/releases/download/${GRPC_HEALTH_PROBE_VERSION}/grpc_health_probe-linux-amd64 && \
+    chmod +x /bin/grpc_health_probe
 
 COPY . /app/
 

@@ -28,7 +28,7 @@ spec:
         deployedBy: deploy-node-app
     spec:
       containers:
-        - image: 'jefftian/grpc-health:4ca5b79-1575689002'
+        - image: 'jefftian/grpc-health:f4d503c'
           imagePullPolicy: Always
           name: grpc-health
           env:
@@ -38,6 +38,14 @@ spec:
             - containerPort: 8080
               name: http
               protocol: TCP
+          readinessProbe:
+            exec:
+              command: ["/bin/grpc_health_probe", "-addr=:8080"]
+            initialDelaySeconds: 5
+          livenessProbe:
+            exec:
+              command: ["/bin/grpc_health_probe", "-addr=:8080"]
+            initialDelaySeconds: 10
           resources:
             limits:
               cpu: 150m
