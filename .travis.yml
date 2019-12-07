@@ -13,6 +13,6 @@ jobs:
       # script: skip
       deploy:
         provider: script
-        skip_cleanup: true
+        cleanup: skip
         script:
           - npx semantic-release
