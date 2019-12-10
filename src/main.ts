@@ -2,6 +2,7 @@ import {NestFactory} from '@nestjs/core';
 import {AppModule} from './app.module';
 import {grpcClientOptions} from './health/grpc-client.options';
 import {ShutdownSignal} from '@nestjs/common';
+import {sleep} from '@jeff-tian/sleep';
 
 async function bootstrap() {
     /**
