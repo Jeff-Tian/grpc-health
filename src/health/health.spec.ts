@@ -1,48 +1,38 @@
 import GrpcClient from 'grpc-man/lib/Client';
 import {join} from 'path';
-import {ChildProcess, fork, spawn} from 'child_process';
-import {sleep} from '@jeff-tian/sleep';
+import {ChildProcess, spawn, spawnSync} from 'child_process';
 import {grpc} from './interfaces/compiled';
 import ServingStatus = grpc.health.v1.HealthCheckResponse.ServingStatus;
+import {sleep} from '@jeff-tian/sleep';
 
-jest.setTimeout(30000);
+jest.setTimeout(50000);
 
 describe('Health Check', () => {
     let childProcess: ChildProcess;
     beforeAll(async () => {
-        await new Promise((resolve, reject) => {
-            childProcess = spawn('npm', ['start'], {
-                detached: true,
-            });
-            childProcess.stdout.on('data', (data: Buffer) => {
-                process.stdout.write(data);
-                resolve(data);
-            });
-            childProcess.stderr.on('data', (data: Buffer) => {
-                process.stderr.write(data);
-                reject(data);
-            });
+        childProcess = spawn('npm', ['start'], {
+            detached: true // Trick: detached set to true to allow later kill -pid works
         });
 
-        await sleep(5);
-        console.log('nest application started.');
-        childProcess.on('exit', (code, signal) => {
-            process.stdout.write('child process exited with ' +
-                `code ${code} and signal ${signal}\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n`);
-        });
-        childProcess.stdout.on('data', (data: Buffer) => {
-            process.stdout.write(data);
-        });
-        childProcess.stderr.on('data', (data: Buffer) => {
-            process.stderr.write(data);
-        });
+        let {output} = {output: null};
+        let count = 0;
+
+        while (!output || output.filter(o => o && o.trim(' ', '\r\n').length > 0).length === 0) {
+            console.log('waiting to start testing... ', count++);
+            await sleep(1);
+            output = spawnSync('lsof', ['-i:3001'], {encoding: 'utf8'}).output;
+        }
+
+        console.log('output = ', output.join('\n'));
+        console.log('started testing...');
     });
 
     afterAll(async () => {
-        console.log('done testing!');
+        // Trick: -pid is to kill all sub processes that created by nest
+        // to prevent the error: Some handles are still open to prevent
+        // Jest to quit
         process.kill(-childProcess.pid);
-        await sleep(2);
-        console.log('killed = ', childProcess.killed);
+        await sleep(1);
     });
 
     it('checks', async () => {
