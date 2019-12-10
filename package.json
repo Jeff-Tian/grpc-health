@@ -32,10 +32,11 @@
     "class-transformer": "0.2.3",
     "class-validator": "0.11.0",
     "grpc": "1.24.2",
+    "grpc-ts-health-check": "^2.0.4",
+    "protobufjs": "^6.8.8",
     "reflect-metadata": "0.1.13",
     "rimraf": "3.0.0",
-    "rxjs": "6.5.3",
-    "protobufjs": "^6.8.8"
+    "rxjs": "6.5.3"
   },
   "devDependencies": {
     "@nestjs/cli": "6.12.9",
@@ -67,7 +68,7 @@
     "rootDir": "src",
     "testRegex": ".spec.ts$",
     "transform": {
-      "^.+\\.(t|j)s$": "ts-jest"
+      "^.+\\.(t)s$": "ts-jest"
     },
     "coverageDirectory": "./coverage",
     "testEnvironment": "node"

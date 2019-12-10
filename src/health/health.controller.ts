@@ -1,14 +1,13 @@
 import {Controller, Get, OnModuleInit} from '@nestjs/common';
 import {Client, ClientGrpc, GrpcMethod} from '@nestjs/microservices';
 import {Observable} from 'rxjs';
-import {grpcClientOptions} from '../grpc-client.options';
+import {grpcClientOptions} from './grpc-client.options';
 import {grpc} from './interfaces/compiled';
-import IHealthCheckRequest = grpc.health.v1.IHealthCheckRequest;
 import ServingStatus = grpc.health.v1.HealthCheckResponse.ServingStatus;
-import IHealthCheckResponse = grpc.health.v1.IHealthCheckResponse;
+import {GrpcHealthCheck, HealthCheckRequest, HealthCheckResponse} from 'grpc-ts-health-check';
 
 interface HealthService {
-    check(data: IHealthCheckRequest): Observable<any>;
+    check(data: HealthCheckRequest.AsObject): Observable<any>;
 }
 
 @Controller()
@@ -33,7 +32,7 @@ export class HealthController implements OnModuleInit {
     }
 
     @GrpcMethod('Health')
-    Check(data: IHealthCheckRequest): IHealthCheckResponse {
+    Check(data: HealthCheckRequest.AsObject): HealthCheckResponse.AsObject {
         return {
             status: ServingStatus.SERVING
         };
