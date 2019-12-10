@@ -11,6 +11,8 @@ jobs:
       node_js: lts/*
       # Advanced: optionally overwrite your default `script` step to skip the tests
       # script: skip
+      before_deploy:
+        - ls
       deploy:
         provider: script
         cleanup: skip
