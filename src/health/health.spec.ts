@@ -31,6 +31,7 @@ describe('Health Check', () => {
         // Trick: -pid is to kill all sub processes that created by nest
         // to prevent the error: Some handles are still open to prevent
         // Jest to quit
+        // https://azimi.me/2014/12/31/kill-child_process-node-js.html
         process.kill(-childProcess.pid);
         await sleep(1);
     });
