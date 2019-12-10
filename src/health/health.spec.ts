@@ -48,7 +48,7 @@ describe('Health Check', () => {
 
     it('checks', async () => {
         const client = new GrpcClient(
-            '0.0.0.0:8080',
+            '127.0.0.1:8080',
             join(__dirname, 'health.proto')
         );
 
