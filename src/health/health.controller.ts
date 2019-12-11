@@ -4,9 +4,12 @@ import {Observable} from 'rxjs';
 import {grpcClientOptions} from './grpc-client.options';
 import {grpc} from './interfaces/compiled';
 import ServingStatus = grpc.health.v1.HealthCheckResponse.ServingStatus;
-import {GrpcHealthCheck, HealthCheckRequest, HealthCheckResponse} from 'grpc-ts-health-check';
+import {
+    HealthCheckRequest,
+    HealthCheckResponse
+} from 'grpc-ts-health-check';
 
-interface HealthService {
+export interface HealthService {
     check(data: HealthCheckRequest.AsObject): Observable<any>;
 }
 
