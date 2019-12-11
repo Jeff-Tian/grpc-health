@@ -25,6 +25,7 @@ export const extendedGrpcOptions = (
         package: clientOptions.options.package,
         packages: R.uniq([clientOptions.options.package, 'grpc.health.v1']),
         protoPath: clientOptions.options.protoPath,
+        protoPaths: R.uniq([clientOptions.options.protoPath, join(__dirname, './health.proto')]),
         loader: {
             includeDirs: R.uniq([
                 ...((clientOptions.options.loader || {}).includeDirs || []),

@@ -33,6 +33,7 @@ export interface ExtendedGrpcOptions {
         maxReceiveMessageLength?: number;
         credentials?: any;
         protoPath: string;
+        protoPaths: string[];
         package: string;
         packages: string[];
         protoLoader?: string;
@@ -90,8 +91,11 @@ export class ServerGrpc extends Server implements CustomTransportStrategy {
     }
 
     public async bindEvents() {
-        const grpcContext = this.loadProto();
-        const packageNames: string[] = this.getOptionsProp(this.options, 'packages');
+        const grpcContext = this.loadProtos();
+        const packageNames: string[] = this.getOptionsProp(
+            this.options,
+            'packages'
+        );
         for (const packageName of packageNames) {
             const grpcPkg = this.lookupPackage(grpcContext, packageName);
             if (!grpcPkg) {
@@ -356,20 +360,32 @@ export class ServerGrpc extends Server implements CustomTransportStrategy {
         return pkg;
     }
 
-    public loadProto(): any {
+    public loadProtos(): any {
+        const files = this.getOptionsProp(this.options, 'protoPaths');
+
+        return files.reduce((prev: any, file: string) => {
+            const proto = this.loadProto(file);
+
+            for (const key in proto) {
+                if (proto.hasOwnProperty(key)) {
+                    prev[key] = proto[key];
+                }
+            }
+
+            return prev;
+        }, {});
+    }
+
+    public loadProto(file = this.getOptionsProp(this.options, 'protoPath')): any {
         try {
-            const file = this.getOptionsProp(this.options, 'protoPath');
             const loader = this.getOptionsProp(this.options, 'loader');
 
             const packageDefinition = grpcProtoLoaderPackage.loadSync(file, loader);
-            const packageObject = grpcPackage.loadPackageDefinition(
-                packageDefinition
-            );
-            return packageObject;
+            return grpcPackage.loadPackageDefinition(packageDefinition);
         } catch (err) {
             const invalidProtoError = new InvalidProtoDefinitionException();
             const message =
-                err && err.message ? err.message : invalidProtoError.message;
+                `${err && err.message ? err.message : invalidProtoError.message} - (${file})`;
 
             this.logger.error(message, invalidProtoError.stack);
             throw err;
