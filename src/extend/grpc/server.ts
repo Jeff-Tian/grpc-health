@@ -25,7 +25,7 @@ import {Transport} from '@nestjs/microservices/enums/transport.enum';
 let grpcPackage: any = {};
 let grpcProtoLoaderPackage: any = {};
 
-interface ExtendedGrpcOptions {
+export interface ExtendedGrpcOptions {
     transport?: Transport.GRPC;
     options: {
         url?: string;
