@@ -1,8 +1,6 @@
 import {NestFactory} from '@nestjs/core';
 import {AppModule} from './app.module';
-import {grpcClientOptions} from './health/grpc-client.options';
-import {ShutdownSignal} from '@nestjs/common';
-import {sleep} from '@jeff-tian/sleep';
+import {grpcClientOptions, grpcServerOptions} from './health/grpc-client.options';
 
 async function bootstrap() {
     /**
@@ -20,7 +18,7 @@ async function bootstrap() {
      *
      */
     const app = await NestFactory.create(AppModule);
-    app.connectMicroservice(grpcClientOptions);
+    app.connectMicroservice(grpcServerOptions);
 
     app.enableShutdownHooks();
     await app.startAllMicroservicesAsync();

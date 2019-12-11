@@ -30,7 +30,8 @@
     "arrow-parens": false,
     "no-console": false,
     "object-literal-sort-keys": false,
-    "trailing-comma": true
+    "trailing-comma": true,
+    "ban-types": false
   },
   "rulesDirectory": []
 }
