@@ -19,11 +19,38 @@ import {
     CustomTransportStrategy,
     MessageHandler
 } from '@nestjs/microservices/interfaces';
-import {GrpcOptions} from '@nestjs/microservices/interfaces/microservice-configuration.interface';
 import {Server} from '@nestjs/microservices/server';
+import {Transport} from '@nestjs/microservices/enums/transport.enum';
 
 let grpcPackage: any = {};
 let grpcProtoLoaderPackage: any = {};
+
+interface ExtendedGrpcOptions {
+    transport?: Transport.GRPC;
+    options: {
+        url?: string;
+        maxSendMessageLength?: number;
+        maxReceiveMessageLength?: number;
+        credentials?: any;
+        protoPath: string;
+        package: string;
+        packages: string[];
+        protoLoader?: string;
+        loader?: {
+            keepCase?: boolean;
+            alternateCommentMode?: boolean;
+            longs?: Function;
+            enums?: Function;
+            bytes?: Function;
+            defaults?: boolean;
+            arrays?: boolean;
+            objects?: boolean;
+            oneofs?: boolean;
+            json?: boolean;
+            includeDirs?: string[];
+        };
+    };
+}
 
 interface GrpcCall<TRequest = any, TMetadata = any> {
     request: TRequest;
@@ -38,7 +65,7 @@ export class ServerGrpc extends Server implements CustomTransportStrategy {
     private readonly url: string;
     private grpcClient: any;
 
-    constructor(private readonly options: GrpcOptions['options']) {
+    constructor(private readonly options: ExtendedGrpcOptions['options']) {
         super();
         this.url = this.getOptionsProp(options, 'url') || GRPC_DEFAULT_URL;
 
@@ -64,23 +91,24 @@ export class ServerGrpc extends Server implements CustomTransportStrategy {
 
     public async bindEvents() {
         const grpcContext = this.loadProto();
-        const packageName = this.getOptionsProp(this.options, 'package');
-        const grpcPkg = this.lookupPackage(grpcContext, packageName);
-        if (!grpcPkg) {
-            const invalidPackageError = new InvalidGrpcPackageException();
-            this.logger.error(invalidPackageError.message, invalidPackageError.stack);
-            throw invalidPackageError;
-        }
+        const packageNames: string[] = this.getOptionsProp(this.options, 'packages');
+        for (const packageName of packageNames) {
+            const grpcPkg = this.lookupPackage(grpcContext, packageName);
+            if (!grpcPkg) {
+                const invalidPackageError = new InvalidGrpcPackageException();
+                this.logger.error(
+                    invalidPackageError.message,
+                    invalidPackageError.stack
+                );
+                throw invalidPackageError;
+            }
 
-        // Take all of the services defined in grpcPkg and assign them to
-        // method handlers defined in Controllers
-        for (const definition of this.getServiceNames(grpcPkg)) {
-            this.grpcClient.addService(
-                // First parameter requires exact service definition from proto
-                definition.service.service,
-                // Here full proto definition required along with namespaced pattern name
-                await this.createService(definition.service, definition.name)
-            );
+            for (const definition of this.getServiceNames(grpcPkg)) {
+                this.grpcClient.addService(
+                    definition.service.service,
+                    await this.createService(definition.service, definition.name)
+                );
+            }
         }
     }
 

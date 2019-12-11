@@ -13,5 +13,5 @@ export const grpcClientOptions: ClientOptions = {
 };
 
 export const grpcServerOptions: CustomStrategy = {
-    strategy: new ServerGrpc(options),
+    strategy: new ServerGrpc({...options, packages: [options.package]}),
 };

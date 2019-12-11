@@ -1,6 +1,6 @@
 import {NestFactory} from '@nestjs/core';
 import {AppModule} from './app.module';
-import {grpcClientOptions, grpcServerOptions} from './health/grpc-client.options';
+import {grpcServerOptions} from './health/grpc-client.options';
 
 async function bootstrap() {
     /**
