@@ -25,4 +25,4 @@ RUN GRPC_HEALTH_PROBE_VERSION=v0.3.1 && \
 
 COPY . /app/
 
-CMD ["node", "src/index.js"]
+CMD ["node", "dist/index.js"]
