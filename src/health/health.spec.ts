@@ -11,7 +11,8 @@ describe('Health Check', () => {
     let childProcess: ChildProcess;
     beforeAll(async () => {
         childProcess = spawn('npm', ['start'], {
-            detached: true // Trick: detached set to true to allow later kill -pid works
+            detached: true, // Trick: detached set to true to allow later kill -pid works,
+            env: {...process.env}
         });
 
         let {output} = {output: null};
@@ -20,7 +21,7 @@ describe('Health Check', () => {
         while (!output || output.filter(o => o && o.trim(' ', '\r\n').length > 0).length === 0) {
             console.log('waiting to start testing... ', count++);
             await sleep(1);
-            output = spawnSync('lsof', ['-i:3001'], {encoding: 'utf8'}).output;
+            output = spawnSync('lsof', [`-i:${process.env.HTTP_PORT || 3001}`], {encoding: 'utf8'}).output;
         }
 
         console.log('output = ', output.join('\n'));
