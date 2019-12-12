@@ -1,4 +1,4 @@
 bases: []
 resources:
   - deployment.yaml
-  - service.yaml
+#  - service.yaml

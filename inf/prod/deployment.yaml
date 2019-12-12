@@ -48,11 +48,11 @@ spec:
             initialDelaySeconds: 10
           resources:
             limits:
-              cpu: 150m
-              memory: 128Mi
+              cpu: 15
+              memory: 64Mi
             requests:
               cpu: 3m
-              memory: 64Mi
+              memory: 32Mi
           command:
             - node
             - dist/main.js
