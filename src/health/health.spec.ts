@@ -1,9 +1,10 @@
 import GrpcClient from 'grpc-man/lib/Client';
-import {join} from 'path';
+import {join, resolve} from 'path';
 import {ChildProcess, spawn, spawnSync} from 'child_process';
 import {grpc} from './interfaces/compiled';
 import ServingStatus = grpc.health.v1.HealthCheckResponse.ServingStatus;
 import {sleep} from '@jeff-tian/sleep';
+import GrpcHealthCheckHelper from './health.helper';
 
 jest.setTimeout(50000);
 
@@ -18,10 +19,15 @@ describe('Health Check', () => {
         let {output} = {output: null};
         let count = 0;
 
-        while (!output || output.filter(o => o && o.trim(' ', '\r\n').length > 0).length === 0) {
+        while (
+            !output ||
+            output.filter(o => o && o.trim(' ', '\r\n').length > 0).length === 0
+            ) {
             console.log('waiting to start testing... ', count++);
             await sleep(1);
-            output = spawnSync('lsof', [`-i:${process.env.HTTP_PORT || 3001}`], {encoding: 'utf8'}).output;
+            output = spawnSync('lsof', [`-i:${process.env.HTTP_PORT || 3001}`], {
+                encoding: 'utf8'
+            }).output;
         }
 
         console.log('output = ', output.join('\n'));
@@ -47,5 +53,11 @@ describe('Health Check', () => {
             service: 'whatever'
         });
         expect(res).toEqual({status: ServingStatus[ServingStatus.SERVING]});
+    });
+
+    it('get health proto path', () => {
+        expect(GrpcHealthCheckHelper.getHealthCheckProtoPath()).toEqual(
+            resolve(__dirname, './health.proto')
+        );
     });
 });
