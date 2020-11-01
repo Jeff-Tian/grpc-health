@@ -32,9 +32,7 @@ export interface ExtendedGrpcOptions {
         maxSendMessageLength?: number;
         maxReceiveMessageLength?: number;
         credentials?: any;
-        protoPath: string;
         protoPaths: string[];
-        package: string;
         packages: string[];
         protoLoader?: string;
         loader?: {
@@ -376,7 +374,7 @@ export class ServerGrpc extends Server implements CustomTransportStrategy {
         }, {});
     }
 
-    public loadProto(file = this.getOptionsProp(this.options, 'protoPath')): any {
+    public loadProto(file: string): any {
         try {
             const loader = this.getOptionsProp(this.options, 'loader');
 

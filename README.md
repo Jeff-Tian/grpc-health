@@ -6,8 +6,16 @@
 
 ## Installation
 
+If you are using nest js 7, then 
+
 ```bash
 npm i grpc-health --save
+```
+
+If you are still using nest js 6, then you should install the v1.3.2 for this package:
+
+```bash
+npm i grpc-health@1.3.2 --save
 ```
 
 ## Usage

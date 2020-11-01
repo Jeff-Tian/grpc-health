@@ -19,20 +19,26 @@ export const grpcClientOptions: ClientOptions = {
 };
 export const extendedGrpcOptions = (
     clientOptions: GrpcOptions
-): CustomStrategy => ({
-    strategy: new ServerGrpc({
-        ...clientOptions.options,
-        package: clientOptions.options.package,
-        packages: R.uniq([clientOptions.options.package, 'grpc.health.v1']),
-        protoPath: clientOptions.options.protoPath,
-        protoPaths: R.uniq([clientOptions.options.protoPath, join(__dirname, './health.proto')]),
-        loader: {
-            includeDirs: R.uniq([
-                ...((clientOptions.options.loader || {}).includeDirs || []),
-                join(__dirname, './health.proto')
-            ])
-        }
-    })
-});
+): CustomStrategy => {
+    const pack = clientOptions.options.package;
+    const packages = pack instanceof Array ? pack : [pack];
+
+    const protoPath = clientOptions.options.protoPath;
+    const protoPaths = protoPath instanceof Array ? protoPath : [protoPath];
+
+    return ({
+        strategy: new ServerGrpc({
+            ...clientOptions.options,
+            packages: R.uniq([...packages, 'grpc.health.v1']),
+            protoPaths: R.uniq([...protoPaths, join(__dirname, './health.proto')]),
+            loader: {
+                includeDirs: R.uniq([
+                    ...((clientOptions.options.loader || {}).includeDirs || []),
+                    join(__dirname, './health.proto')
+                ])
+            }
+        })
+    });
+};
 
 export const grpcServerOptions = extendedGrpcOptions(grpcClientOptions);
