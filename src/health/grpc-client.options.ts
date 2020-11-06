@@ -26,6 +26,10 @@ export const extendedGrpcOptions = (
     const protoPath = clientOptions.options.protoPath;
     const protoPaths = protoPath instanceof Array ? protoPath : [protoPath];
 
+    // The following line breaks the purity, but it is needed to let health controller
+    // to know that the original grpc options has been extended
+    grpcClientOptions.options = clientOptions.options;
+
     return ({
         strategy: new ServerGrpc({
             ...clientOptions.options,
