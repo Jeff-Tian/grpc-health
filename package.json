@@ -52,7 +52,7 @@
     "grpc-man": "^1.6.10",
     "jest": "24.9.0",
     "prettier": "1.19.1",
-    "semantic-release": "^15.13.31",
+    "semantic-release": "^17.2.3",
     "supertest": "4.0.2",
     "ts-jest": "24.2.0",
     "ts-loader": "6.2.1",
