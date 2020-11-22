@@ -62,7 +62,7 @@ interface GrpcCall<TRequest = any, TMetadata = any> {
 
 export class ServerGrpc extends Server implements CustomTransportStrategy {
     private readonly url: string;
-    private grpcClient: any;
+    private grpcServer: any;
 
     constructor(private readonly options: ExtendedGrpcOptions['options']) {
         super();
@@ -78,13 +78,13 @@ export class ServerGrpc extends Server implements CustomTransportStrategy {
     }
 
     public async listen(callback: () => void) {
-        this.grpcClient = this.createClient();
+        this.grpcServer = this.createServer();
         await this.start(callback);
     }
 
     public async start(callback?: () => void) {
         await this.bindEvents();
-        this.grpcClient.start();
+        this.grpcServer.start();
         callback();
     }
 
@@ -106,7 +106,7 @@ export class ServerGrpc extends Server implements CustomTransportStrategy {
             }
 
             for (const definition of this.getServiceNames(grpcPkg)) {
-                this.grpcClient.addService(
+                this.grpcServer.addService(
                     definition.service.service,
                     await this.createService(definition.service, definition.name)
                 );
@@ -306,8 +306,8 @@ export class ServerGrpc extends Server implements CustomTransportStrategy {
 
     public close() {
         // tslint:disable-next-line:no-unused-expression
-        this.grpcClient && this.grpcClient.forceShutdown();
-        this.grpcClient = null;
+        this.grpcServer && this.grpcServer.forceShutdown();
+        this.grpcServer = null;
     }
 
     public deserialize(obj: any): any {
@@ -328,7 +328,7 @@ export class ServerGrpc extends Server implements CustomTransportStrategy {
         this.messageHandlers.set(route, callback);
     }
 
-    public createClient(): any {
+    public createServer(): any {
         const server = new grpcPackage.Server({
             'grpc.max_send_message_length': this.getOptionsProp(
                 this.options,

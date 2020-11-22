@@ -4,6 +4,8 @@
 
 [![Build Status](https://travis-ci.com/Jeff-Tian/grpc-health.svg?branch=master)](https://travis-ci.com/Jeff-Tian/grpc-health)
 
+![Usage example](https://cachenet-jeff-tian.cloud.okteto.net/http/https%3A%2F%2Fraw.githubusercontent.com%2FJeff-Tian%2Fnestjs-hero-grpc-sample-with-health-check%2Fmaster%2Fexample.jpeg)
+
 ## Installation
 
 If you are using nest js 7, then 
@@ -22,7 +24,11 @@ npm i grpc-health@1.3.2 --save
 
 ### In nest js application:
 
-Currently the `nest js` doesn't support multiple root namespaces of proto files, that is to say, all your proto files
+Full example: https://github.com/Jeff-Tian/nestjs-hero-grpc-sample-with-health-check
+
+As when creating this package the `nest js` doesn't support multiple root namespaces of proto files, that is to say, all
+ your proto
+ files
 should be packaged in the same `root namespace` such as `myService.xxx`: https://github.com/nestjs/nest/pull/1733
 
 However, the standard `grpc health check` protocol is under package `grpc.health.v1`. This makes you embarrassment
@@ -35,18 +41,20 @@ project to let your `nest js` support standard `grpc health check interfaces` wi
 // main.ts
 import { NestFactory } from "@nestjs/core";
 import { AppModule } from "./app.module";
-import { grpcOptions } from "./grpc.options";
-import { extendedGrpcOptions } from "grpc-health/dist/health/grpc-client.options";
+import { grpcClientOptions } from "./grpc-client.options";
+import {
+  extendedGrpcOptions,
+} from "grpc-health/dist/health/health-grpc-client.options";
 import { GrpcOptions } from "@nestjs/microservices";
 
 async function bootstrap() {
-  // What your existing code might look like this:
-  // const options = grpcOptions
-  // Now wrap it with the `extendedGrpcOptions` method
-  const options = extendedGrpcOptions(grpcOptions as GrpcOptions);
+  const app = await NestFactory.create(AppModule);
+  app.connectMicroservice(
+    extendedGrpcOptions(grpcClientOptions as GrpcOptions)
+  );
 
-  const app = await NestFactory.createMicroservice(AppModule, options);
-  await app.listenAsync();
+  await app.startAllMicroservicesAsync();
+  await app.listen(3001);
 }
 
 bootstrap();

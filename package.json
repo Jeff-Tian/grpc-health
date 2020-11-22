@@ -20,7 +20,8 @@
     "interfaces": "pbjs -t static-module src/health/health.proto -o src/health/interfaces/compiled.js && pbts -o src/health/interfaces/compiled.d.ts src/health/interfaces/compiled.js",
     "deploy": "npm run build&&npx deploy-node-app",
     "update": "kubectl --context=\"kubesail-jeff-tian\" apply -k inf/prod",
-    "semantic-release": "semantic-release"
+    "semantic-release": "semantic-release",
+    "postinstall": "sh support-me.sh"
   },
   "dependencies": {
     "@grpc/proto-loader": "0.5.3",
