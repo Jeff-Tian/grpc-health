@@ -26,6 +26,43 @@ npm i grpc-health@1.3.2 --save
 
 Full example: https://github.com/Jeff-Tian/nestjs-hero-grpc-sample-with-health-check
 
+#### with nest js 7
+
+In your app module, import `HealthModule` 
+```typescript
+@Module({
+  imports: [HealthModule.register(grpcClientOptions as GrpcOptions)],
+  controllers: [AppController],
+  providers: [AppService],
+})
+export class AppModule {}
+```
+
+In your `main.ts`, extend your grpc client options:
+
+```typescript
+import { extendedGrpcOptions } from 'grpc-health/dist/health/health-grpc-client.options';
+import { GrpcOptions } from '@nestjs/microservices';
+import { AppModule } from './app.module';
+
+async function bootstrap() {
+  const app = await NestFactory.create<NestFastifyApplication>(
+    AppModule,
+    new FastifyAdapter({ logger: true }),
+  );
+
+  app.connectMicroservice(
+    extendedGrpcOptions(grpcClientOptions as GrpcOptions),
+  );
+    
+  await app.startAllMicroservicesAsync();
+  await app.listen(3000, '0.0.0.0');
+}
+
+bootstrap();
+```
+
+#### with nest js 6
 As when creating this package the `nest js` doesn't support multiple root namespaces of proto files, that is to say, all
  your proto
  files
@@ -149,6 +186,25 @@ You can also check out this repo: https://github.com/Jeff-Tian/nestjs-hero-grpc-
 this
 `grpc-health` package to the official `hero grpc app`.
 
+## Gear with health check probe in kubernetes cluster
+
+Now you can append the following to your deployment yaml file:
+
+```yaml
+  name: ...
+  readinessProbe:
+    exec:
+      command: ["/bin/grpc_health_probe", "-addr=:5005"]
+    initialDelaySeconds: 5
+  livenessProbe:
+    exec:
+      command: ["/bin/grpc_health_probe", "-addr=:5005"]
+    initialDelaySeconds: 10
+  resources:...
+```
+
+## How
+
 The main change to the original sample code is this commit:
 https://github.com/Jeff-Tian/nestjs-hero-grpc-sample-with-health-check/commit/b76249ccf76d183143d55130825967d3bebe47de
 
@@ -160,3 +216,9 @@ cd grpc-health
 npm i
 npm test
 ```
+
+## Support me
+
+If you find this repo useful, you can [buy me a coffee](https://jeff-tian.jiwai.win/support-me):
+
+[![Buy me a Coffee!](https://cachenet-jeff-tian.cloud.okteto.net/http/https%3A%2F%2Fapi.urlto.app%2Fv1%2Fscreenshoturl%2Fjpg%3Furl%3Dhttps%253A%252F%252Fjeff-tian.jiwai.win%252Fsupport-me%26fullpage%3Dtrue%26viewportwidth%3D1024%26viewportheight%3D1000%26ignorecache%3Dfalse%26region%3Dus)](https://jeff-tian.jiwai.win/support-me)
