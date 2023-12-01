@@ -32,12 +32,12 @@
     "@nestjs/platform-express": "7.4.4",
     "class-transformer": "0.3.1",
     "class-validator": "0.11.0",
-    "grpc": "^1.24.3",
+    "grpc": "^1.24.8",
     "grpc-ts-health-check": "^2.0.4",
     "protobufjs": "^6.8.8",
     "ramda": "^0.26.1",
     "reflect-metadata": "0.1.13",
-    "rimraf": "3.0.0",
+    "rimraf": "4.0.0",
     "rxjs": "6.5.3"
   },
   "devDependencies": {
